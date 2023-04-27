@@ -42,9 +42,10 @@ JOIN `course_teacher` ON `courses`.`id` = `course_teacher`.`course_id`
 JOIN `teachers` ON `course_teacher`.`teacher_id` = `teachers`.`id`
 WHERE `departments`.`name` = 'Dipartimento di Matematica';
 
-7. SELECT `students`.`name`AS 'Name', `students`.`surname`AS 'Surname', `exam_student`.`exam_id` AS 'Id Esame', COUNT(`exam_student`.`vote`) AS 'Num Tentativi'
+7. SELECT `students`.`id`, `students`.`name`, `students`.`surname`, MAX(`exam_student`.`vote`) AS `voto_esame`, `courses`.`name`, COUNT(`exam_student`.`vote`) AS 'numero_tentativi'
 FROM `students`
 JOIN `exam_student` ON `students`.`id` = `exam_student`.`student_id`
-WHERE `exam_student`.`vote` < 18
-GROUP BY `students`.`name`, `students`.`surname`, `exam_student`.`exam_id`
-ORDER BY `students`.`surname` ASC, `students`.`name` ASC;
+JOIN `exams` ON `exam_student`.`exam_id` = `exams`.`id`
+JOIN `courses` ON `exams`.`course_id` = `courses`.`id`
+GROUP BY `students`.`id`, `courses`.`id`
+HAVING `voto_esame` > 18;
